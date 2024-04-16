@@ -19,6 +19,7 @@ int main (int argc, char *argv[], char *envp[] ) {
 	 else{
 		for (i=0; i<argc; i++) {
 		printf("Аргумент %d: %s\n", i, argv[i]);
+		}
        	}
 
 	return 0;
