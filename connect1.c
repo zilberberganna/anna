@@ -3,21 +3,25 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+//подключение библиотеки для управления файлами
 int main() {
-	int fd;
-	size_t size;
-	char string[]="group";
+	int fd; //файловый дескриптор
+	size_t size;//размер строки в байтах
+	char string[]="group\n";
+	//открытие файла на запись, если файла не существуют,  он будет создан с правами доступа 0666
 	if((fd=open("file1.txt", O_WRONLY|O_CREAT, 0666))<0){
 		printf("ошибка при открытии файла на запись\n");
 		exit(-1);
 	}
-	size=(fd, string, 17);
-	if (size !=17){
-		printf("не удалось записатьвсю строку в файл\n");
+//чтение из файла в строку стринг 
+	size = write(fd, string, 6);
+	if (size != 6){
+		printf("не удалось записать всю строку в файл\n");
 		exit(-1);
 	}
-	 if (size !=17){ 
-                printf("не удалось записатьвсю строку в файл\n");
+//закрытие файла
+	 if (close(fd)){ 
+                printf("не удалось закрыть файл\n");
                 exit(-1);
         }
 	return 0;
