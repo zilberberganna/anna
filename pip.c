@@ -1,39 +1,101 @@
 #include <sys/types.h>
-#include <unistd.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
-//создаем массив из двух элементов для хранений файловых дескрипторов для чтения ии для записи
-
-int main () { 
-        int fd[2];
+int main() {
+	// Создаем массив из двух элементов для хранения файловых дескрипторов  для чтения и записи
+        int fd1[2], fd2[2];
+	pid_t result;
         size_t size;
-        char string[]="Hello, world!";
-        char resstring[14];
-        if(pipe(fd)<0){ 
-                printf("Can\'t create pipe\n");
-                exit(-1);
-        }
-        size=write(fd[1], string, 14);
-//провверка количества байт записанных  в  строку с помощью write()
-        if(size!=14) { 
-                printf("Can\'t write all string\n");
-                exit(-1);
-        }
-        size=read(fd[0],resstring, 14);
-//провверка количества байт прочитанных  в  строку с помощью read()
-
-	if (size<0){
-		printf("Can\'t string\n");
+        char string1[] = "Hello, child!", string2[] = "Hello, parent!";
+        char resstring1[13], resstring2[14];
+        if (pipe(fd1)<0){
+		printf("Can\'t create pipe\n");
+	// Возврат признака аврийного завершения программы (-1)
 		exit(-1);
 	}
-	printf("%s\n",resstring);
-//закрытие для чтения
-	if(close(fd[0])<0) {
-		printf("Can\'t close input stream\n");
-	}
-//закрытие для записи
-	if(close(fd[1])<0) { 
-                printf("Can\'t close output stream\n");
+	if (pipe(fd2)<0){
+                printf("Can\'t create pipe\n");
+        // Возврат признака аврийного завершения программы (-1)
+                exit(-1);
         }
-	return 0;
-}
+	result = fork();
+	if (result<0) {
+		printf("ошибка выполнения fork()\n");
+		exit(-1);
+	}
+	else if (result>0) {
+		if (close(fd1[0])<0) {
+			printf("ошибка при закрытии pipe на чтение\n");
+			exit(-1);
+		}
+		if (close(fd2[1])<0) {
+                        printf("ошибка при закрытии pipe на чтение\n");
+                        exit(-1);
+                }
+
+		size = write(fd1[1], string1, 13);
+		// Проверка колличества байт, записанных в строку 
+		if (size != 13) {
+			printf("Can\'t write all string\n");
+			exit(-1);
+		}
+		printf("процесс родитель записал информацию в pipe и заканчивает работу \n");
+		size = read(fd2[0], resstring2, 14);
+                //Проверка колличества байт, записанных в строку  
+                if(size !=14){
+                        printf("Can\'t read string\n");         
+                         exit(-1);      
+                }
+                printf("Информация от дочернего процесса:");
+		for (int i=0; i<14; i++) printf("%c", resstring2[i]);
+		printf("\n");
+		if (close(fd1[1])<0) {
+                        printf("Can\'t close output stream\n");
+                        exit(-1);
+		}
+		if (close(fd2[0])<0) {
+                        printf("Can\'t close input stream\n");
+                        exit(-1);
+                }
+
+
+	}
+	else {
+		if(close(fd1[1])<0){
+        	        printf("Can\'t close output stream\n");
+			exit(-1);
+	        }
+		if(close(fd2[0])<0){
+                        printf("Can\'t close input stream\n");
+                        exit(-1);
+                }
+		size = read(fd1[0], resstring1, 13);
+		//Закрытие pipe для записи 
+        	if(size !=13){
+                	printf("Can\'t read string\n");		
+      		       	 exit(-1);	
+		}
+		printf("Информация от родителя:");
+		for (int i=0; i<13; i++) printf("%c", resstring1[i]);
+		printf("\n");
+		size = write(fd2[1], string2, 14);
+                // Проверка колличества байт, записанных в строку 
+                if (size != 14) {
+                        printf("Can\'t write all string\n");
+                        exit(-1);
+                }
+                printf("процесс ребенок  записал информацию в pipe \n");
+		//Проверка колличества байт, прочитанных из pipe 
+		if(close(fd1[0])<0){
+			printf("Can\'t close input stream\n");
+			exit(-1);
+		}
+		if(close(fd2[1])<0){
+                        printf("Can\'t close  output stream\n");
+	                exit(-1);
+                }
+
+	}
+        return 0;
+}        
