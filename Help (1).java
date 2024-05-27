@@ -56,11 +56,11 @@ class Help {
                                 System.out.println(" операторы;");
 			                	System.out.println("} while (условие);");
                                 break;
-            case '6':
+                       case '6':
                                 System.out.println("Инструкция break:\n");
                                 System.out.println("break; или break метка;");
                                 break;
-            case '7':
+                       case '7':
                                 System.out.println("Инструкция continue:\n");
                                 System.out.println("continue; или continue метка;");
                                 break;
