@@ -54,7 +54,7 @@ class Help {
                                 System.out.println("Цикл do-while:\n");
                                 System.out.println("do {");
                                 System.out.println(" операторы;");
-			                	System.out.println("} while (условие);");
+			        System.out.println("} while (условие);");
                                 break;
                        case '6':
                                 System.out.println("Инструкция break:\n");
