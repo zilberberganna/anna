@@ -1,4 +1,4 @@
-class Avto {
+`class Avto {
 	int kpass;
 	int vfuel;
 	double rash;
